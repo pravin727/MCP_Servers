@@ -1,0 +1,28 @@
+{
+  "name": "mcp-testing-agent",
+  "version": "1.0.1",
+  "description": "MCP Server for Autonomous Testing Agent",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "npx tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.4.0",
+    "axios": "^1.7.0",
+    "diff": "^5.2.0",
+    "exceljs": "^4.4.0",
+    "faker": "^5.5.3",
+    "playwright": "^1.41.0",
+    "soap": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.0"
+  },
+  "keywords": ["mcp", "testing", "automation"],
+  "author": "",
+  "license": "ISC"
+}
