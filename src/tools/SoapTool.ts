@@ -1,5 +1,6 @@
 import { SoapEngine, SoapRequest } from '../engines/SoapEngine.js';
 import { Tool } from '../types.js';
+import { renderTemplate } from '../utils/Template.js';
 
 export const executeSoapTool: Tool = {
   name: 'execute_soap',
@@ -23,7 +24,7 @@ export const executeSoapTool: Tool = {
 };
 
 executeSoapTool.handler = async (args: any) => {
-  const request: SoapRequest = args;
+  const request: SoapRequest = renderTemplate(args);
   const result = await SoapEngine.execute(request);
 
   return {

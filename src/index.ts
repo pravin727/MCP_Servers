@@ -14,6 +14,15 @@ import { importOpenApiTool } from './tools/OpenApiTool.js';
 import { generateRestTestsFromOpenApiTool, runRestTestSuiteTool } from './tools/RestTestSuiteTool.js';
 import { importWsdlTool } from './tools/WsdlTool.js';
 import { generateSoapTestsFromWsdlTool, runSoapTestSuiteTool } from './tools/SoapTestSuiteTool.js';
+import { loadEnvironmentTool, setEnvVarTool, showEnvironmentTool } from './tools/EnvironmentTool.js';
+import { extractToEnvTool } from './tools/ExtractionTool.js';
+import { validateSchemaTool } from './tools/SchemaValidationTool.js';
+import { assertResponseTool } from './tools/AssertionTool.js';
+import { pollEndpointTool } from './tools/PollTool.js';
+import { runDockerTool, stopDockerTool } from './tools/DockerTool.js';
+import { connectDatabaseTool, queryDatabaseTool, closeDatabaseTool, getConnectionStatusTool } from './tools/DatabaseTool.js';
+import { getSchemaInfoTool, getTableStructureTool, getTableRelationshipsTool, generateSelectQueryTool } from './tools/QueryGeneratorTool.js';
+import { executeParallelQueriesTool, mergeQueryResultsTool, createCompositeTestDataTool } from './tools/ParallelQueryTool.js';
 
 interface Tool {
   name: string;
@@ -39,6 +48,26 @@ const tools: Tool[] = [
    importWsdlTool,
    generateSoapTestsFromWsdlTool,
    runSoapTestSuiteTool,
+   loadEnvironmentTool,
+   setEnvVarTool,
+   showEnvironmentTool,
+   extractToEnvTool,
+   validateSchemaTool,
+   assertResponseTool,
+  pollEndpointTool,
+  runDockerTool,
+  stopDockerTool,
+   connectDatabaseTool,
+   queryDatabaseTool,
+   closeDatabaseTool,
+   getConnectionStatusTool,
+   getSchemaInfoTool,
+   getTableStructureTool,
+   getTableRelationshipsTool,
+   generateSelectQueryTool,
+   executeParallelQueriesTool,
+   mergeQueryResultsTool,
+   createCompositeTestDataTool,
 ];
 
 function handleRequest(request: any): Promise<any> {

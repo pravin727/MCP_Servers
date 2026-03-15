@@ -7,6 +7,8 @@ export interface RestTestCase {
   description?: string;
   request: RestRequest;
   expectedStatus?: number;
+  assertions?: any[];
+  schema?: any;
 }
 
 export const generateRestTestsFromOpenApiTool: Tool = {
@@ -108,6 +110,8 @@ export const runRestTestSuiteTool: Tool = {
               },
             },
             expectedStatus: { type: 'number' },
+            assertions: { type: 'array' },
+            schema: { type: 'object' },
           },
           required: ['id', 'name', 'request'],
         },
@@ -129,7 +133,35 @@ runRestTestSuiteTool.handler = async (args: any) => {
 
     const status = (response && response.status) || response?.statusCode;
     const expectedStatus = test.expectedStatus ?? 200;
-    const passed = status === expectedStatus;
+    const basePassed = status === expectedStatus;
+
+    let assertionResults: any = null;
+    let schemaResults: any = null;
+    let passed = basePassed;
+
+    if (test.assertions && test.assertions.length > 0) {
+      const { assertResponseTool } = await import('./AssertionTool.js');
+      const assertionResp = await (assertResponseTool.handler as any)({
+        response: { ...response, durationMs },
+        rules: test.assertions,
+      });
+      assertionResults = safeParseContent(assertionResp);
+      if (assertionResults && assertionResults.passed === false) {
+        passed = false;
+      }
+    }
+
+    if (test.schema) {
+      const { validateSchemaTool } = await import('./SchemaValidationTool.js');
+      const schemaResp = await (validateSchemaTool.handler as any)({
+        schema: test.schema,
+        data: response.data,
+      });
+      schemaResults = safeParseContent(schemaResp);
+      if (schemaResults && schemaResults.valid === false) {
+        passed = false;
+      }
+    }
 
     results.push({
       id: test.id,
@@ -144,6 +176,8 @@ runRestTestSuiteTool.handler = async (args: any) => {
       passed,
       durationMs,
       error: response?.error,
+      assertions: assertionResults,
+      schemaValidation: schemaResults,
     });
   }
 
@@ -162,4 +196,15 @@ runRestTestSuiteTool.handler = async (args: any) => {
     ],
   };
 };
+
+function safeParseContent(toolResult: any): any {
+  try {
+    const content = toolResult?.content?.[0]?.text;
+    if (!content) return null;
+    return JSON.parse(content);
+  } catch {
+    return null;
+  }
+}
+
 

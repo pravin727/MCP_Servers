@@ -14,6 +14,12 @@ export const executeRestTool: Tool = {
       url: { type: 'string' },
       headers: { type: 'object' },
       body: { type: 'any' },
+      files: {
+        type: 'object',
+        additionalProperties: { type: 'string' },
+        description: 'Optional map of form field name to local file path for multipart upload.',
+      },
+      session: { type: 'string', description: 'Session name (cookie jar + keep-alive context). Default: default' },
       auth: {
         type: 'object',
         properties: {

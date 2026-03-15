@@ -1,5 +1,6 @@
 import { UIEngine, UITestScript } from '../engines/UIEngine.js';
 import { Tool } from '../types.js';
+import { renderTemplate } from '../utils/Template.js';
 
 export const executeUiTestTool: Tool = {
   name: 'execute_ui_test',
@@ -12,11 +13,12 @@ export const executeUiTestTool: Tool = {
         items: {
           type: 'object',
           properties: {
-            action: { type: 'string', enum: ['goto', 'click', 'type', 'waitForSelector', 'screenshot'] },
+            action: { type: 'string', enum: ['goto', 'click', 'type', 'waitForSelector', 'screenshot', 'download'] },
             selector: { type: 'string' },
             value: { type: 'string' },
             url: { type: 'string' },
             timeout: { type: 'number' },
+            path: { type: 'string', description: 'optional file path for download action' },
           },
         },
       },
@@ -27,7 +29,7 @@ export const executeUiTestTool: Tool = {
 };
 
 executeUiTestTool.handler = async (args: any) => {
-  const script: UITestScript = args;
+  const script: UITestScript = renderTemplate(args);
   const result = await UIEngine.execute(script);
 
   return {

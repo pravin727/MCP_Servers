@@ -2,11 +2,13 @@ import { chromium, Browser, Page } from 'playwright';
 
 export interface UITestScript {
   steps: Array<{
-    action: 'goto' | 'click' | 'type' | 'waitForSelector' | 'screenshot';
+    action: 'goto' | 'click' | 'type' | 'waitForSelector' | 'screenshot' | 'download';
     selector?: string;
     value?: string;
     url?: string;
     timeout?: number;
+    // used only for download action
+    path?: string;
   }>;
   headless?: boolean;
 }
@@ -44,6 +46,16 @@ export class UIEngine {
           case 'screenshot':
             const screenshot = await page.screenshot({ fullPage: true });
             results.push({ action: 'screenshot', data: screenshot.toString('base64') });
+            break;
+          case 'download':
+            // click element and wait for download to complete
+            const [download] = await Promise.all([
+              page.waitForEvent('download'),
+              page.click(step.selector!, { timeout: step.timeout || 10000 }),
+            ]);
+            const savePath = step.path || download.suggestedFilename();
+            await download.saveAs(savePath);
+            results.push({ action: 'download', selector: step.selector, path: savePath, success: true });
             break;
         }
       }
